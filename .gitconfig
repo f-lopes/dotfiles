@@ -1,0 +1,12 @@
+[user]
+	email = florian.lopes@outlook.com
+	name = Florian Lopes
+[branch "dev"]
+	rebase = true
+[pull]
+	rebase = true
+[alias]
+	p = pull --rebase
+	cm = commit
+	st = status
+	stat = diff --stat

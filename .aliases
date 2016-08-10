@@ -1,0 +1,22 @@
+# General
+alias ..='cd ..'
+alias ...='cd ../..'
+
+# Docker
+alias dps='docker ps'
+alias dpsa='docker ps -a'
+alias dlogs='docker logs'
+alias dimages='docker images'
+alias dcps='docker-compose ps'
+alias dclogs='docker-compose logs'
+alias dcstop='docker-compose stop'
+alias dcstoprm='docker-compose stop && docker-compose rm -f'
+alias dcup='docker-compose up -d'
+alias dcbup='docker-compose build && docker-compose up -d'
+alias dcpup='docker-compose pull && docker-compose up -d'
+alias dcpull='docker-compose pull'
+alias dcclean='docker rm -v $(docker ps -a -q -f status=exited)'
+alias dccleani='docker rmi $(docker images -f "dangling=true" -q)'
+alias dhistory='docker history'
+alias dversion='docker version'
+alias dv='docker -v'
