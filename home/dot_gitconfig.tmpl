@@ -1,0 +1,12 @@
+[user]
+    name = {{ env "GIT_AUTHOR_NAME" | default "Florian Lopes" | quote }}
+    email = {{ env "GIT_AUTHOR_EMAIL" | default "florian.lopes@outlook.com" | quote }}
+
+[init]
+    defaultBranch = main
+
+[pull]
+    rebase = true
+
+[core]
+    excludesfile = ~/.config/git/ignore

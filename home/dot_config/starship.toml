@@ -1,0 +1,19 @@
+format = "$directory$git_branch$git_status$java$golang$character"
+
+[directory]
+truncation_length = 3
+truncate_to_repo = true
+
+[git_branch]
+format = "on [$branch]($style) "
+
+[git_status]
+format = "([$all_status$ahead_behind]($style) )"
+
+[java]
+format = "[$symbol($version )]($style)"
+symbol = "java "
+
+[golang]
+format = "[$symbol($version )]($style)"
+symbol = "go "

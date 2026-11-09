@@ -1,0 +1,28 @@
+[tools]
+java = "corretto-17"
+maven = "3.9.9"
+go = "1.21"
+terraform = "latest"
+starship = "latest"
+ripgrep = "latest"
+bat = "latest"
+gh = "latest"
+chezmoi = "latest"
+
+"aqua:junegunn/fzf" = "latest"
+"aqua:sharkdp/fd" = "latest"
+"aqua:casey/just" = "latest"
+"aqua:go-task/task" = "latest"
+"aqua:jesseduffield/lazygit" = "latest"
+"aqua:zellij" = "latest"
+"aqua:ajeetdsouza/zoxide" = "latest"
+"aqua:kubernetes/kubernetes/kubectl" = "latest"
+"aqua:helm/helm" = "latest"
+"aqua:derailed/k9s" = "latest"
+"aqua:ahmetb/kubectx" = "latest"
+"aqua:mozilla/sops" = "latest"
+"aqua:koalaman/shellcheck" = "latest"
+"aqua:nojima/httpie-go" = "latest"
+
+[settings]
+experimental = true

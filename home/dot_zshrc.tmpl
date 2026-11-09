@@ -1,0 +1,7 @@
+# Managed by chezmoi — edit the source, not this file.
+
+ZDOTDIR_FRAGMENTS="${XDG_CONFIG_HOME:-$HOME/.config}/zsh/zsh.d"
+for _f in "$ZDOTDIR_FRAGMENTS"/*.zsh(N); do
+  source "$_f"
+done
+unset _f

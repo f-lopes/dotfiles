@@ -1,0 +1,6 @@
+alias cat='bat'
+alias f='fd'
+alias r='rg'
+alias lg='lazygit'
+alias k='kubectl'
+alias k9='k9s'

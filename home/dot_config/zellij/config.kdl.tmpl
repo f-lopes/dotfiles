@@ -1,0 +1,15 @@
+theme "default"
+default_shell "zsh"
+pane_frames true
+copy_clipboard "system"
+{{ if eq .chezmoi.os "darwin" -}}
+copy_command "pbcopy"
+{{ else -}}
+// Linux uses terminal clipboard support by default; set wl-copy or xclip here if needed.
+{{ end -}}
+
+keybinds {
+    normal {
+        bind "Alt n" { NewPane; }
+    }
+}
