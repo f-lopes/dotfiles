@@ -62,6 +62,28 @@ for example:
 GIT_AUTHOR_EMAIL=you@example.com chezmoi --source ~/work/git/dotfiles apply
 ```
 
+## SSH config
+
+`home/dot_ssh/config.tmpl` renders to `~/.ssh/config` and uses `onepasswordRead`
+to pull server details from 1Password, so no IPs, ports, or usernames are stored
+in the public repository. The OrbStack include line is static and safe to commit.
+
+Before running `chezmoi apply`, create the following 1Password items (type: **Document**):
+
+| 1Password Item | Field | Value |
+|---------------|-------|-------|
+| `DEV/florianlopes_io_server` | `ip_address` | Server IP address |
+| | `port` | SSH port (e.g. `2432`) |
+| | `username` | SSH username |
+| `DEV/dedibox_server` | `ip_address` | Server IP address |
+| | `port` | SSH port (e.g. `2432`) |
+| | `username` | SSH username |
+
+If a 1Password item is missing, `chezmoi apply` will fail with a clear error
+message — create the item and retry. The Port line is conditional for both
+hosts: it only renders when the `port` field has a value, so leaving it empty
+defaults to port 22.
+
 ## Secrets and 1Password
 
 Do not commit secret values. The `90-secrets.zsh.tmpl` examples are wrapped in
