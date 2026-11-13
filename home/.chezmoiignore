@@ -1,2 +1,5 @@
 .DS_Store
 README.md
+
+# SSH private keys — generate locally, never manage via dotfiles
+dot_ssh/id_*
