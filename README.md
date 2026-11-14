@@ -30,12 +30,14 @@ everyday tools are not downloaded twice.
 
 ## Zsh layout
 
+The managed `~/.zprofile` sets up the login-shell environment (Homebrew, mise
+shims, OrbStack), so global tools also resolve in IDEs and `zsh -l -c`.
 The managed `~/.zshrc` loads `~/.config/zsh/zsh.d/*.zsh` in filename order.
 Numbered prefixes define startup order:
 
 1. `00-env.zsh` sets XDG defaults, editor, locale, and history.
-2. `10-path.zsh` adds Homebrew on macOS and user PATH entries; SDKMAN is loaded
-   before mise.
+2. `10-path.zsh` adds Homebrew on macOS and user PATH entries. Java and Maven
+   come from mise (global config), not SDKMAN.
 3. `20-mise.zsh` activates mise after manual PATH setup and adds its shims for
    non-interactive tools.
 4. `30-ohmyzsh.zsh`, `40-aliases.zsh`, and `50-tools.zsh` load optional shell

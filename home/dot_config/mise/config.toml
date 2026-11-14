@@ -1,13 +1,19 @@
 [tools]
-java = "corretto-17"
+java = ["corretto-17", "corretto-21", "corretto-25"]
 maven = "3.9.9"
 go = "1.21"
+node = "lts"                                      # Needed by npm: backend tools (junie-cli)
 terraform = "latest"
 starship = "latest"
 ripgrep = "latest"
 bat = "latest"
 gh = "latest"
 chezmoi = "latest"
+
+# OS-level tools managed by Homebrew/OrbStack (not mise):
+#   op (1password-cli) — Homebrew cask, requires macOS code-signing trust & Touch ID
+#   vagrant — Homebrew cask, stable Ruby version (not experimental vagrant-go)
+#   docker, docker-compose — OrbStack symlinks to /usr/local/bin on macOS
 
 "aqua:junegunn/fzf" = "latest"
 "aqua:sharkdp/fd" = "latest"
@@ -23,6 +29,14 @@ chezmoi = "latest"
 "aqua:mozilla/sops" = "latest"
 "aqua:koalaman/shellcheck" = "latest"
 "aqua:nojima/httpie-go" = "latest"
+
+# Heavy/occasional dev tools
+cmake = "latest"                                  # Build system generator
+"aqua:kubernetes-sigs/kind" = "latest"            # Kubernetes in Docker (local clusters)
+"aqua:GoogleContainerTools/skaffold" = "latest"   # Kubernetes dev workflow
+"aqua:aquasecurity/trivy" = "latest"              # Container security scanning
+"aqua:infracost/infracost" = "latest"             # Terraform cost estimates
+"npm:@jetbrains/junie-cli" = { version = "latest", allow_low_downloads = true }  # Junie CLI
 
 [settings]
 experimental = true
