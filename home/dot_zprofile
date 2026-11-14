@@ -1,0 +1,24 @@
+# Managed by chezmoi — edit the source, not this file.
+#
+# Login-shell environment. Loaded before .zshrc, and also by tools that read
+# the login-shell environment without starting an interactive shell (IntelliJ,
+# VS Code, `zsh -l -c ...`), so globally-installed tools resolve there too.
+
+# Homebrew (op, git, casks)
+if [[ -x /opt/homebrew/bin/brew ]]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [[ -x /usr/local/bin/brew ]]; then
+  eval "$(/usr/local/bin/brew shellenv)"
+fi
+
+# mise shims: global tools (java, mvn, kubectl, ...) without `mise activate`.
+# Interactive shells additionally run `mise activate` from zsh.d/20-mise.zsh.
+_mise_shims="${XDG_DATA_HOME:-$HOME/.local/share}/mise/shims"
+case ":$PATH:" in
+  *":$_mise_shims:"*) ;;
+  *) export PATH="$_mise_shims:$PATH" ;;
+esac
+unset _mise_shims
+
+# OrbStack: docker, docker-compose and integration
+source ~/.orbstack/shell/init.zsh 2>/dev/null || :
