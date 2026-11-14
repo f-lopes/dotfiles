@@ -1,15 +1,24 @@
 Include ~/.orbstack/ssh/config
+{{- /*
+  Hosts below are read from 1Password. They are skipped when the op CLI is
+  missing or CHEZMOI_SKIP_1PASSWORD is set (fresh machine, 1Password not yet
+  signed in). Re-run `chezmoi apply` once 1Password is set up.
+*/}}
+{{- if and (lookPath "op") (not (env "CHEZMOI_SKIP_1PASSWORD")) }}
+{{- $portfolioPort := onepasswordRead "op://DEV/florianlopes_io_server/port/text" }}
+{{- $dediboxPort := onepasswordRead "op://DEV/dedibox_server/port/text" }}
 
 Host portfolio
     HostName {{ onepasswordRead "op://DEV/florianlopes_io_server/ip_address/text" }}
     User {{ onepasswordRead "op://DEV/florianlopes_io_server/username/text" }}
-{{- if onepasswordRead "op://DEV/florianlopes_io_server/port/text" }}
-    Port {{ onepasswordRead "op://DEV/florianlopes_io_server/port/text" }}
+{{- if $portfolioPort }}
+    Port {{ $portfolioPort }}
 {{- end }}
 
 Host dedibox
     HostName {{ onepasswordRead "op://DEV/dedibox_server/ip_address/text" }}
     User {{ onepasswordRead "op://DEV/dedibox_server/username/text" }}
-{{- if onepasswordRead "op://DEV/dedibox_server/port/text" }}
-    Port {{ onepasswordRead "op://DEV/dedibox_server/port/text" }}
+{{- if $dediboxPort }}
+    Port {{ $dediboxPort }}
+{{- end }}
 {{- end }}

@@ -19,14 +19,24 @@ Configure a different source with `CHEZMOI_DOTFILES_REPO`.
 ## Mise: global and project tools
 
 `home/dot_config/mise/config.toml` becomes `~/.config/mise/config.toml` and is
-the source of truth for everyday tools: Java, Maven, Go, Terraform, Starship,
-the common CLI utilities, and Kubernetes tools. They are available from any
-directory when mise is activated by the zsh setup.
+the source of truth for global CLI tools: Java (Corretto 17, 21 and 25, with
+17 as the default), Maven, Go, Node, Terraform, CMake, Starship, the common
+CLI utilities, the Kubernetes tools (kubectl, Helm, k9s, kind, Skaffold), Trivy,
+Infracost, and the Junie CLI. Node is required by `npm:` tools such as Junie.
+These tools are available from any directory: `~/.zprofile` puts the mise
+shims on PATH and `20-mise.zsh` activates mise in interactive shells.
 
-The `dev-env` repository keeps bootstrap packages and hooks in `.mise.toml`,
-along with project-scoped tools such as CMake, kind, Skaffold, Trivy, Infracost,
-and the Junie CLI. Both configurations use mise's shared data directory, so
-everyday tools are not downloaded twice.
+Tools are split into three layers:
+
+1. System and GUI packages (git, zsh, op, OrbStack, Vagrant, Raycast) are
+   Homebrew packages declared in `dev-env`'s `[bootstrap.packages]`.
+2. Global CLI tools are declared in this repository's mise config.
+3. Per-project overrides go in each project's `.mise.toml`, for example
+   `java = "corretto-21"`. They apply only inside that project.
+
+The `dev-env` bootstrap applies this repository, then runs `mise install` to
+install the global tools. After changing the config on an existing machine,
+apply it and run `cd ~ && mise install`.
 
 ## Zsh layout
 
@@ -81,8 +91,14 @@ Before running `chezmoi apply`, create the following 1Password items (type: **Do
 | | `port` | SSH port (e.g. `2432`) |
 | | `username` | SSH username |
 
-If a 1Password item is missing, `chezmoi apply` will fail with a clear error
-message — create the item and retry. The Port line is conditional for both
+The 1Password hosts are skipped, leaving only the OrbStack include, when the
+`op` CLI is not on PATH or `CHEZMOI_SKIP_1PASSWORD` is set. The `dev-env`
+bootstrap sets that variable on a fresh machine where no 1Password account is
+configured yet. Once 1Password is signed in and its CLI integration is enabled
+(Settings → Developer), run `chezmoi apply` again to render the hosts.
+
+If `op` is available but a 1Password item is missing, `chezmoi apply` fails
+with a clear error message; create the item and retry. The Port line is conditional for both
 hosts: it only renders when the `port` field has a value, so leaving it empty
 defaults to port 22.
 
