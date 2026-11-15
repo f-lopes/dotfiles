@@ -8,6 +8,10 @@ Include ~/.orbstack/ssh/config
 {{- $portfolioPort := onepasswordRead "op://DEV/florianlopes_io_server/port/text" }}
 {{- $dediboxPort := onepasswordRead "op://DEV/dedibox_server/port/text" }}
 
+Host *
+    AddKeysToAgent yes
+    UseKeychain yes
+
 Host portfolio
     HostName {{ onepasswordRead "op://DEV/florianlopes_io_server/ip_address/text" }}
     User {{ onepasswordRead "op://DEV/florianlopes_io_server/username/text" }}
