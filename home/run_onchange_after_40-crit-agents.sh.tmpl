@@ -2,14 +2,20 @@
 # Wires crit into the coding agents at user level. chezmoi re-runs this script
 # whenever one of the two rendered lines below changes: a crit version bump in
 # the mise config, or Claude Code appearing on PATH.
-# crit {{ index (include "dot_config/mise/config.toml" | fromToml).tools "github:tomasz-tomczyk/crit" }}
+{{- $crit := index (include "dot_config/mise/config.toml" | fromToml).tools "github:tomasz-tomczyk/crit" }}
+# crit {{ $crit }}
 # claude {{ if lookPath "claude" }}found{{ else }}missing{{ end }}
 set -euo pipefail
 cd "$HOME"   # crit install writes user-level files when run from ~
 
+# On a fresh machine this runs before `mise install`. A bare `mise exec -- crit`
+# failed there (mise 2026.10.10 on PATH), so install the pinned tool by name.
+crit_tool="github:tomasz-tomczyk/crit@{{ $crit }}"
+mise install "$crit_tool"
+
 # Codex + Junie CLI: ~/.agents/skills/crit{,-cli,-story}. --force refreshes the
-# generated skill files after a crit upgrade. mise exec installs crit if needed.
-mise exec -- crit install --force codex
+# generated skill files after a crit upgrade.
+mise exec "$crit_tool" -- crit install --force codex
 
 # Claude Code: plugin with /crit, skills and the plan-mode hook
 if command -v claude >/dev/null 2>&1; then
