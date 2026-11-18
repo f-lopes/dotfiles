@@ -22,7 +22,8 @@ Configure a different source with `CHEZMOI_DOTFILES_REPO`.
 the source of truth for global CLI tools: Java (Corretto 17, 21 and 25, with
 17 as the default), Maven, Go, Node, Terraform, CMake, Starship, the common
 CLI utilities, the Kubernetes tools (kubectl, Helm, k9s, kind, Skaffold), Trivy,
-Infracost, and the Junie CLI. Node is required by `npm:` tools such as Junie.
+Infracost, the Junie and Codex CLIs, and [crit](https://github.com/tomasz-tomczyk/crit)
+(pinned). Node is required by `npm:` tools such as Junie and Codex.
 These tools are available from any directory: `~/.zprofile` puts the mise
 shims on PATH and `20-mise.zsh` activates mise in interactive shells.
 
@@ -37,6 +38,22 @@ Tools are split into three layers:
 The `dev-env` bootstrap applies this repository, then runs `mise install` to
 install the global tools. After changing the config on an existing machine,
 apply it and run `cd ~ && mise install`.
+
+## Coding agents: crit
+
+`run_onchange_after_40-crit-agents.sh.tmpl` wires crit into the coding agents
+at user level, so `/crit` (Claude Code) and `$crit` (Codex, Junie) work in every
+project with nothing committed to the projects themselves:
+
+- `crit install --force codex` writes the skills to `~/.agents/skills/`, which
+  both Codex and the Junie CLI read.
+- If `claude` is on PATH, it adds the `crit` plugin marketplace and installs
+  `crit@crit` (the `/crit` command, skills and the plan-mode hook), or updates
+  the marketplace when the plugin is already there.
+
+chezmoi re-runs the script when the crit pin in the mise config changes, or
+when Claude Code first appears on PATH. To upgrade crit, bump its version in
+`home/dot_config/mise/config.toml` and run `chezmoi apply`.
 
 ## Zsh layout
 

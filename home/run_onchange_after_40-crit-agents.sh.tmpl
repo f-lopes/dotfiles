@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Wires crit into the coding agents at user level. chezmoi re-runs this script
+# whenever one of the two rendered lines below changes: a crit version bump in
+# the mise config, or Claude Code appearing on PATH.
+# crit {{ index (include "dot_config/mise/config.toml" | fromToml).tools "github:tomasz-tomczyk/crit" }}
+# claude {{ if lookPath "claude" }}found{{ else }}missing{{ end }}
+set -euo pipefail
+cd "$HOME"   # crit install writes user-level files when run from ~
+
+# Codex + Junie CLI: ~/.agents/skills/crit{,-cli,-story}. --force refreshes the
+# generated skill files after a crit upgrade. mise exec installs crit if needed.
+mise exec -- crit install --force codex
+
+# Claude Code: plugin with /crit, skills and the plan-mode hook
+if command -v claude >/dev/null 2>&1; then
+  if claude plugin list 2>/dev/null | grep -q 'crit@crit'; then
+    claude plugin marketplace update crit || true
+  else
+    claude plugin marketplace add tomasz-tomczyk/crit
+    claude plugin install crit@crit
+  fi
+else
+  echo "crit: claude not on PATH, skipping the Claude Code plugin"
+fi
