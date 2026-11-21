@@ -1,0 +1,22 @@
+# Coding agents start with the 1Password service account token, which can read
+# only the DEV-AGENTS vault, so op never falls back to the desktop app
+# integration. `command claude` bypasses the wrapper. See the dotfiles README.
+{{- if eq .chezmoi.os "darwin" }}
+
+_agent_with_op_token() {
+  local cmd=$1 token
+  shift
+  token=$(security find-generic-password -a "$USER" -s op-sa-agent -w 2>/dev/null)
+  if [[ -z $token ]]; then
+    print -u2 "$cmd: no 1Password service account token in the Keychain (op-sa-agent)."
+    print -u2 "  Store it once (see the dotfiles README): security add-generic-password -U -a \"\$USER\" -s op-sa-agent -w \"\$(op read 'op://Private/<item>/credential')\""
+    print -u2 "  Or start the agent without it: command $cmd"
+    return 1
+  fi
+  OP_SERVICE_ACCOUNT_TOKEN=$token command "$cmd" "$@"
+}
+
+claude() { _agent_with_op_token claude "$@"; }
+codex()  { _agent_with_op_token codex "$@"; }
+junie()  { _agent_with_op_token junie "$@"; }
+{{- end }}

@@ -55,6 +55,57 @@ chezmoi re-runs the script when the crit pin in the mise config changes, or
 when Claude Code first appears on PATH. To upgrade crit, bump its version in
 `home/dot_config/mise/config.toml` and run `chezmoi apply`.
 
+## Coding agents: instructions and secrets
+
+`home/dot_agents/AGENTS.md` renders to `~/.agents/AGENTS.md`, the global
+instructions for every agent. No agent reads that path itself, so:
+
+- `~/.codex/AGENTS.md` is a symlink to it (Codex reads `$CODEX_HOME/AGENTS.md`).
+- `~/.claude/CLAUDE.md` imports it with `@~/.agents/AGENTS.md`.
+
+It tells agents to use secrets only through a 1Password service account that
+can read only the `DEV-AGENTS` vault. The vaults are split:
+
+| Vault | Contents | Who reads it |
+|-------|----------|--------------|
+| `Private` | Personal items | You only; service accounts never see it |
+| `DEV` | Your SSH keys, server passwords, tokens | You, and chezmoi templates |
+| `DEV-AGENTS` | Agent credentials: deploy keys, scoped API tokens | The agents' service account |
+
+Give agents their own scoped credentials in `DEV-AGENTS` rather than copies of
+yours from `DEV`.
+
+AGENTS.md is guidance, not enforcement. The protection is that agents always
+start with `OP_SERVICE_ACCOUNT_TOKEN` set, so `op` never falls back to the
+desktop app (which can reach every vault). On macOS, `60-agents.zsh` wraps
+`claude`, `codex` and `junie` to read the token from the Keychain item
+`op-sa-agent` and refuses to start the agent when it is missing.
+`command claude` bypasses the wrapper. Agents started by an IDE or a desktop
+app are not wrapped.
+
+One-time setup:
+
+1. In 1Password, create the `DEV-AGENTS` vault and a service account with
+   `read_items` on it only. A service account's vaults can't be changed
+   after it is created. Keep its token in `Private`.
+2. Copy the token from `Private` to the Keychain. Run this in a normal
+   terminal, not inside an agent, so `op` uses your own account:
+
+   ```sh
+   security add-generic-password -U -a "$USER" -s op-sa-agent \
+     -w "$(op read 'op://Private/<service account item>/credential')"
+   ```
+
+   Don't use the interactive prompt (`-w` with no value): it keeps only the
+   first 128 characters, which cuts the token off, and `op` then fails with
+   `failed to DecodeSACredentials`. `-U` replaces an existing item.
+3. Deny any 1Password unlock prompt you didn't start yourself, or turn off
+   **Settings → Developer → Integrate with 1Password CLI** when you don't need it.
+
+Optionally, add deny rules to `~/.claude/settings.json` under
+`permissions.deny`: `Bash(op signin:*)`, `Bash(op account:*)` and
+`Bash(op run --no-masking:*)`.
+
 ## Zsh layout
 
 The managed `~/.zprofile` sets up the login-shell environment (Homebrew, mise
@@ -69,7 +120,9 @@ Numbered prefixes define startup order:
    non-interactive tools.
 4. `30-ohmyzsh.zsh`, `40-aliases.zsh`, and `50-tools.zsh` load optional shell
    integrations and aliases.
-5. `80-prompt.zsh` initializes Starship last; `90-secrets.zsh` is an inert
+5. `60-agents.zsh` (macOS) wraps the coding agents to start them with the
+   1Password service account token.
+6. `80-prompt.zsh` initializes Starship last; `90-secrets.zsh` is an inert
    1Password example.
 
 To add a fragment, create the next appropriately numbered `.zsh` file under
